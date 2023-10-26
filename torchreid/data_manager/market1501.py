@@ -10,10 +10,11 @@ import urllib
 import tarfile
 import zipfile
 import os.path as osp
-from scipy.io import loadmat
+# from scipy.io import loadmat
 import numpy as np
 import h5py
-from scipy.misc import imsave
+# from scipy.misc import imsave
+from torchreid.utils.tools import get_breakpoint
 
 
 class Market1501(object):
@@ -29,9 +30,10 @@ class Market1501(object):
     # identities: 1501 (+1 for background)
     # images: 12936 (train) + 3368 (query) + 15913 (gallery)
     """
-    dataset_dir = 'market1501'
+    dataset_dir = 'market'
+    _root = '/dataset/reid/horNet_data/'
 
-    def __init__(self, root='data', verbose=True, **kwargs):
+    def __init__(self, root=_root, verbose=True, **kwargs):
         super(Market1501, self).__init__()
         self.dataset_dir = osp.join(root, self.dataset_dir)
         self.train_dir = osp.join(self.dataset_dir, 'bounding_box_train')
@@ -79,12 +81,20 @@ class Market1501(object):
             raise RuntimeError("'{}' is not available".format(self.gallery_dir))
 
     def _process_dir(self, dir_path, relabel=False):
+        # market-1501 数据格式 0000_c1s1_000151_01.jpg
         img_paths = glob.glob(osp.join(dir_path, '*.jpg'))
         pattern = re.compile(r'([-\d]+)_c(\d)')
+        # re 创建了一个正则化表达式对象
+        # ([-\d]+): 含义是匹配一个或多个数字或破折号（-）。[-\d] 表示匹配数字或破折号，+ 表示匹配前面的模式一次或多次。
+        # _c: 直接匹配字符串中的 "_c"
+        #(\d): 用于匹配一个数字。\d 表示匹配一个数字字符
+
 
         pid_container = set()
         for img_path in img_paths:
             pid, _ = map(int, pattern.search(img_path).groups())
+            print(f"==========> {map(int, pattern.search(img_path).groups())}")
+            get_breakpoint()
             if pid == -1: continue  # junk images are just ignored
             pid_container.add(pid)
         pid2label = {pid:label for label, pid in enumerate(pid_container)}

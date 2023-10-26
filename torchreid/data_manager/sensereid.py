@@ -13,7 +13,10 @@ import os.path as osp
 from scipy.io import loadmat
 import numpy as np
 import h5py
-from scipy.misc import imsave
+# from scipy.misc import imsave # scipy 在1.3.0版本后弃用imsave函数
+# 替代方案
+import imageio
+imsave = imageio.imsave
 import copy
 
 

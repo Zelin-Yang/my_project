@@ -31,7 +31,7 @@ from torchreid.optimizers import init_optim
 
 parser = argparse.ArgumentParser(description='Train image model with cross entropy loss')
 # Datasets
-parser.add_argument('--root', type=str, default='data',
+parser.add_argument('--root', type=str, default='/dataset/reid/horNet_data/',
                     help="root path to data directory")
 parser.add_argument('-d', '--dataset', type=str, default='market1501',
                     choices=data_manager.get_names())
